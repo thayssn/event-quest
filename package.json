@@ -1,0 +1,21 @@
+{
+  "name": "event-sourcing",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/ramda": "^0.30.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "class-transformer": "^0.5.1",
+    "keypress": "^0.2.1",
+    "ramda": "^0.30.1"
+  }
+}
