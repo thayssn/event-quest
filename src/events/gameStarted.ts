@@ -2,6 +2,7 @@ import { IGameState } from "@interfaces/game.interface";
 import { AbstractEvent } from "./abstract.event";
 import { Player } from "src/domain/entities/player.entity";
 import { GameEvents } from "src/domain/enums/GameEvents.enum";
+import { EventDTO } from "@interfaces/event.interface";
 
 export type GameStartedData = {
   name: string;
@@ -10,11 +11,15 @@ export type GameStartedData = {
 };
 
 export class GameStarted extends AbstractEvent<GameStartedData> {
-  constructor() {
-    super(GameEvents.GAME_STARTED);
+  static eventName = GameEvents.GAME_STARTED;
+  constructor(event?: EventDTO<GameStartedData>) {
+    super({
+      name: GameEvents.GAME_STARTED,
+      ...event,
+    });
   }
 
-  static commit(state: IGameState): IGameState {
+  commit(state: IGameState): IGameState {
     return {
       ...state,
       player: new Player(),

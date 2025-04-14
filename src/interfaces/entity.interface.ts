@@ -1,4 +1,4 @@
-import { IEvent } from "./event.interface";
+import { EventDTO, IEvent } from "./event.interface";
 
 export interface IEntity {
   state: any;
@@ -9,6 +9,6 @@ export interface IEntity {
 
 export interface IEntityDTO {
   id: string;
-  state: IEntity[];
-  events: IEvent[];
+  state: any;
+  events: EventDTO[];
 }

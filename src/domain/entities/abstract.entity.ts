@@ -1,11 +1,11 @@
 import { IEntity } from "@interfaces/entity.interface";
 import { Reducer } from "../reducer";
-import { EventDTO, IEvent } from "@interfaces/event.interface";
+import { IEvent } from "@interfaces/event.interface";
 import { Exclude, instanceToPlain } from "class-transformer";
 import { write } from "bun";
 import config from "src/config";
 
-export abstract class AbstractEntity implements IEntity {
+export abstract class AbstractEntity<T> implements IEntity {
   state: any;
   @Exclude()
   protected reducer: Reducer;
@@ -14,24 +14,21 @@ export abstract class AbstractEntity implements IEntity {
   @Exclude()
   protected pendingEvents = [];
 
-  constructor(reducer: Reducer, persistedEvents: EventDTO[] = []) {
-    this.reducer = reducer;
+  constructor(persistedEvents: IEvent[] = []) {
+    this.reducer = new Reducer();
     if (persistedEvents.length > 0) {
-      this.persistedEvents = persistedEvents.sort(
-        (a: EventDTO, b: EventDTO) =>
-          a.timestamp.getTime() - b.timestamp.getTime()
-      );
+      this.persistedEvents = persistedEvents;
       this.state = this.consolidate();
     }
   }
 
-  protected get events(): EventDTO[] {
+  get events(): IEvent[] {
     return [...this.persistedEvents, ...this.pendingEvents];
   }
 
-  consolidate(date: Date = new Date()) {
+  consolidate(date: Date = new Date()): T {
     const eventsToDate = this.events.filter((event) => event.timestamp <= date);
-    const currentState = this.reducer.reduce({}, eventsToDate);
+    const currentState = this.reducer.reduce({} as T, eventsToDate);
     return currentState;
   }
 

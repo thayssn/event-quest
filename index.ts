@@ -1,35 +1,64 @@
-import { flatten } from "ramda";
 import readline from "readline";
+import config from "src/config";
 import { Game } from "src/domain/entities/game.entity";
-import { Direction, DirectionMap } from "src/domain/enums/Direction.enum";
+import { Map } from "src/domain/entities/map.entity";
+import { Direction } from "src/domain/enums/Direction.enum";
+import { EventFactory } from "src/domain/factories/event.factory";
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-  prompt: "> ",
-});
-
-rl.prompt();
-
-const directionLikes = flatten(Object.values(DirectionMap));
-const game = new Game();
+const file = Bun.file(config.database.path);
+const data = await file.json();
+const events = new EventFactory().createMany(data);
+const map = new Map(readline);
+const game = new Game(events, map);
 game.start();
 
-rl.on("line", async (line) => {
-  const [command, ...args] = line.trim().split(" ");
-  switch (command) {
-    case "move":
-      const [direction] = args;
-      if (directionLikes.includes(direction)) {
-        game.movePlayer(direction);
-        game.render(readline);
-      } else {
-        console.log(`Invalid direction! Try ${Object.values(Direction)}`);
-      }
+readline.emitKeypressEvents(process.stdin);
+process.stdin.on("keypress", async (ch, key) => {
+  switch (key.name) {
+    case "up":
+      game.movePlayer(Direction.UP);
       break;
-    case "save":
-      await game.persist();
+    case "down":
+      game.movePlayer(Direction.DOWN);
+      break;
+    case "left":
+      game.movePlayer(Direction.LEFT);
+      break;
+    case "right":
+      game.movePlayer(Direction.RIGHT);
+      break;
+    case "q":
+      process.exit(0);
+    case "r":
+      await game.replay();
+      return;
+    default:
+      break;
   }
+  game.render();
+  await game.persist();
 });
 
-game.render(readline);
+game.render();
+
+if (process.stdin.isTTY) {
+  process.stdin.setRawMode(true);
+}
+process.stdin.resume();
+
+// const directionLikes = flatten(Object.values(DirectionMap));
+// const commands: Record<string, (cmd: string, args?: string[]) => void> = {
+//   move: (cmd: string, args: string[]) => {
+//     const [direction] = args;
+//     if (!directionLikes.includes(direction)) warn(`Invalid direction`);
+//     game.movePlayer(direction);
+//   },
+//   reprocess: (cmd: string) => {},
+// };
+
+// rl.on("line", async (line) => {
+//   const [cmd, ...args] = line.trim().split(" ");
+//   commands[cmd](cmd, args);
+//   await game.persist();
+//   map.render(game.state);
+// });

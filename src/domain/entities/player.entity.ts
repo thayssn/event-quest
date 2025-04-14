@@ -39,7 +39,7 @@ export class Player {
       case Direction.UP:
         this.y = Math.max(this.y - 1, 0);
         break;
-      case Direction.BOTTOM:
+      case Direction.DOWN:
         this.y = Math.min(this.y + 1, config.map.height - 1);
         break;
       case "left":
@@ -49,8 +49,6 @@ export class Player {
         this.x = Math.min(this.x + 1, config.map.width - 1);
         break;
     }
-
-    console.log(this.x);
 
     return this;
   }

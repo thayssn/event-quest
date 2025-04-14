@@ -1,14 +1,13 @@
-import { IEntityState } from "@interfaces/entity.interface";
-import { EventCommit, EventDTO } from "@interfaces/event.interface";
+import { EventCommit, EventDTO, IEvent } from "@interfaces/event.interface";
 
 export type EventHandlers = Record<string, EventCommit>;
 
 export class Reducer {
-  constructor(private readonly eventHandlers: EventHandlers) {}
+  constructor() {}
 
-  reduce<T extends IEntityState>(state: T, events: EventDTO[]): T {
+  reduce<T>(state: T, events: IEvent[]): T {
     return events.reduce((state, currentEvent) => {
-      return this.eventHandlers[currentEvent.name](state, currentEvent) as T;
+      return currentEvent.commit(state, currentEvent) as T;
     }, state);
   }
 }

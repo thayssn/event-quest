@@ -10,7 +10,7 @@ export default {
   map: {
     width: 11,
     height: 5,
-    char: ".",
+    char: "-",
   },
   database: {
     path: "./events.json",

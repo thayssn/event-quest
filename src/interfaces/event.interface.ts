@@ -1,8 +1,14 @@
-export type EventDTO = Omit<IEvent, "commit" | "dump">;
+export type EventDTO<T> = {
+  id?: string;
+  name?: string;
+  data?: T;
+  timestamp?: string;
+};
 
-export type EventCommit = (state: any, event: EventDTO) => any;
+export type EventCommit = (state: any, event: IEvent) => any;
 
 export interface IEvent<T = any> {
+  readonly name: string;
   readonly data: T;
   readonly timestamp: Date;
   commit: EventCommit;
