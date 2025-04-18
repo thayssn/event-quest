@@ -32,7 +32,7 @@ export abstract class AbstractEntity<T> implements IEntity {
     return currentState;
   }
 
-  async persist(): Promise<this> {
+  protected async persist(): Promise<this> {
     const eventsToPersist = [...this.persistedEvents, ...this.pendingEvents];
     await write(
       config.database.path,
