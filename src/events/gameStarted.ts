@@ -3,6 +3,7 @@ import { AbstractEvent } from "./abstract.event";
 import { Player } from "src/domain/entities/player.entity";
 import { GameEvents } from "src/domain/enums/GameEvents.enum";
 import { EventDTO } from "@interfaces/event.interface";
+import { Chest } from "src/domain/entities/chest.entity";
 
 export type GameStartedData = {
   name: string;
@@ -22,7 +23,8 @@ export class GameStarted extends AbstractEvent<GameStartedData> {
   commit(state: IGameState): IGameState {
     return {
       ...state,
-      player: new Player(),
+      inventory: [],
+      objects: [],
       started: true,
     };
   }

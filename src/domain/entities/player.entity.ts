@@ -1,21 +1,20 @@
-import { Direction } from "../enums/Direction.enum";
 import config from "src/config";
+import { GameObject, GameObjectDTO } from "./gameObject.entity";
+import { Position } from "@interfaces/position.type";
+import chalk from "chalk";
 
-type Position = {
-  x: number;
-  y: number;
-};
-
-export class Player {
+interface PlayerDTO extends GameObjectDTO {
   health: number;
-  x: number;
-  y: number;
+}
 
-  constructor() {
-    Object.assign(this, {
-      health: config.player.maxHealth,
-      ...config.player.startPosition,
-    });
+export class Player extends GameObject {
+  health: number;
+  name = Player.name;
+  char = chalk.green("@");
+
+  constructor(playerDTO?: PlayerDTO) {
+    super(playerDTO);
+    this.health = playerDTO?.health ?? config.player.maxHealth;
   }
 
   heal(qty: number) {
@@ -29,27 +28,7 @@ export class Player {
   }
 
   respawn(position: Position) {
-    this.x = position.x;
-    this.y = position.y;
-    return this;
-  }
-
-  move(direction: Direction) {
-    switch (direction) {
-      case Direction.UP:
-        this.y = Math.max(this.y - 1, 0);
-        break;
-      case Direction.DOWN:
-        this.y = Math.min(this.y + 1, config.map.height - 1);
-        break;
-      case "left":
-        this.x = Math.max(this.x - 1, 0);
-        break;
-      case "right":
-        this.x = Math.min(this.x + 1, config.map.width - 1);
-        break;
-    }
-
+    this.position = { x: position.x, y: position.y };
     return this;
   }
 }

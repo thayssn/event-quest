@@ -46,6 +46,16 @@ export abstract class AbstractEntity<T> implements IEntity {
     return this;
   }
 
+  protected async clear(): Promise<this> {
+    await write(config.database.path, JSON.stringify([], null, 2), {
+      createPath: true,
+    });
+    this.persistedEvents = [];
+    this.pendingEvents = [];
+
+    return this;
+  }
+
   pushEvents(...events: IEvent[]) {
     this.pendingEvents = [...this.pendingEvents, ...events];
     this.state = this.consolidate();

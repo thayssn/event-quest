@@ -1,4 +1,4 @@
-export type EventDTO<T> = {
+export type EventDTO<T = any> = {
   id?: string;
   name?: string;
   data?: T;
